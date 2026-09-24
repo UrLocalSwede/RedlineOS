@@ -24,7 +24,7 @@ limine/limine:
 	$(MAKE) -C limine
 
 run: build/redlineos.iso
-	qemu-system-x86_64 -cdrom build/redlineos.iso -no-reboot -display none -monitor stdio
+	qemu-system-x86_64 -cdrom build/redlineos.iso -no-reboot -display none -serial mon:stdio
 
 clean:
 	rm -rf build
