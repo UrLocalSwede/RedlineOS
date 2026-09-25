@@ -27,6 +27,7 @@ static void serial_putc(char c) {
     outb(0x3F8, c);
 }
 
+// Prints a String
 static void serial_print(const char *s) {
     while (*s) {
         serial_putc(*s);
@@ -34,6 +35,7 @@ static void serial_print(const char *s) {
     }
 }
 
+// Prints an Integer
 static void serial_print_num(uint64_t n) {
     if (n == 0) {
         serial_putc('0');
@@ -55,9 +57,42 @@ static void serial_print_num(uint64_t n) {
     }
 }
 
+// Prints a Hexadecimal
+static void serial_print_hex(uint64_t n) {
+    serial_print("0x");
+
+    if (n == 0) {
+        serial_putc('0');
+        return;
+        
+    }
+
+    char buf[16];
+    int i = 0;
+
+    while (n > 0) {
+        int digit = n % 16;
+        if (digit < 10) {
+            buf[i] = '0' + digit;
+        } else {
+            buf[i] = 'a' + (digit - 10);
+        }
+        i++;
+        n = n / 16;
+    }
+
+    while (i > 0) {
+        i--;
+        serial_putc(buf[i]);
+    }
+}
+
 void kmain(void) {
     serial_print("hello from RedlineOS!\n");
     serial_print_num(305);
+    serial_print("\n");
+    serial_print_hex(255);
+    serial_print("\n");
     while (1) {
         asm volatile ("hlt");
     }
