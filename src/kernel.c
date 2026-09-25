@@ -34,8 +34,30 @@ static void serial_print(const char *s) {
     }
 }
 
+static void serial_print_num(uint64_t n) {
+    if (n == 0) {
+        serial_putc('0');
+        return;
+    }
+
+    char buf[20];
+    int i = 0;
+
+    while (n > 0) {
+        buf[i] = '0' + n % 10;
+        i++;
+        n = n / 10;
+    }
+
+    while (i > 0) {
+        i--;
+        serial_putc(buf[i]);
+    }
+}
+
 void kmain(void) {
     serial_print("hello from RedlineOS!\n");
+    serial_print_num(305);
     while (1) {
         asm volatile ("hlt");
     }
