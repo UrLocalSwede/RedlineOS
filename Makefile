@@ -1,6 +1,6 @@
 .PHONY: run clean
 
-CFLAGS = -Wall -Wextra -O2 -ffreestanding -fno-stack-protector -fno-PIC -m64 -mcmodel=kernel -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -mno-80387 -Isrc
+CFLAGS = -Wall -Wextra -O2 -ffreestanding -fno-stack-protector -fno-PIC -m64 -mcmodel=kernel -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -mno-80387 -Isrc -mgeneral-regs-only
 LDFLAGS = -T src/linker.ld -nostdlib -static
 SRCS = $(shell find src -name '*.c')
 OBJS = $(patsubst src/%.c,build/%.o,$(SRCS))

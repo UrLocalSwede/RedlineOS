@@ -3,6 +3,7 @@
 
 #include "drivers/serial.h"
 #include "arch/x86_64/gdt.h"
+#include "arch/x86_64/idt.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(6);
@@ -17,9 +18,16 @@ static volatile uint64_t limine_requests_end_marker[] = LIMINE_REQUESTS_END_MARK
 
 
 void kmain(void) {
+    gdt_load();
+    idt_load();
     serial_print("kmain is at ");
     serial_print_hex((uint64_t)kmain);
     serial_print("\n");
+
+    serial_print("Dividing by zero...\n");
+    volatile int zero = 0;
+    volatile int result = 10 / zero;
+    (void)result;
     while (1) {
         asm volatile ("hlt");
     }
