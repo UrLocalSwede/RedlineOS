@@ -56,8 +56,17 @@ static void divide_error_handler(struct interrupt_frame *frame) {
     }
 }
 
+__attribute__((interrupt))
+static void breakpoint_handler(struct interrupt_frame *frame) {
+    serial_print("\nBreakpoint hit at \n");
+    serial_print_hex(frame->rip);
+    serial_print("\n");
+
+}
+
 void idt_load(void) {
     idt_set(0, divide_error_handler);
+    idt_set(3, breakpoint_handler);
 
     idtr.limit = sizeof(idt) - 1;
     idtr.base = (uint64_t)idt;

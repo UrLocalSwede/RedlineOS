@@ -20,14 +20,11 @@ static volatile uint64_t limine_requests_end_marker[] = LIMINE_REQUESTS_END_MARK
 void kmain(void) {
     gdt_load();
     idt_load();
-    serial_print("kmain is at ");
-    serial_print_hex((uint64_t)kmain);
-    serial_print("\n");
 
-    serial_print("Dividing by zero...\n");
-    volatile int zero = 0;
-    volatile int result = 10 / zero;
-    (void)result;
+    asm volatile ("int3");
+
+    serial_print("Welcome to RedlineOS\n");
+
     while (1) {
         asm volatile ("hlt");
     }
