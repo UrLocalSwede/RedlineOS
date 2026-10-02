@@ -21,7 +21,8 @@ void kmain(void) {
     gdt_load();
     idt_load();
 
-    asm volatile ("int3");
+    volatile uint64_t *p = (volatile uint64_t *)0x8000000000000000;
+    *p = 42;
 
     serial_print("Welcome to RedlineOS\n");
 

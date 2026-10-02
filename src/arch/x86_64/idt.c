@@ -64,9 +64,48 @@ static void breakpoint_handler(struct interrupt_frame *frame) {
 
 }
 
+__attribute__((interrupt))
+static void gp_fault_handler(struct interrupt_frame *frame, uint64_t error_code) {
+    serial_print("\nGeneral protection fault \n");
+    serial_print("at address ");
+    serial_print_hex(frame->rip);
+    serial_print("\nerror code ");
+    serial_print_hex(error_code);
+    serial_print("\n");
+
+    while (1)
+    {
+        asm volatile ("cli; hlt");
+    }
+    
+}
+
+__attribute__((interrupt))
+static void page_fault_handler(struct interrupt_frame *frame, uint64_t error_code) {
+    uint64_t bad_address;
+    asm volatile ("mov %%cr2, %0" : "=r"(bad_address));
+    
+    serial_print("!!! CPU EXCEPTION: Page fault\n");
+    serial_print("at address ");
+    serial_print_hex(frame->rip);
+    serial_print("\ntried to access ");
+    serial_print_hex(bad_address);
+    serial_print("\nerror code ");
+    serial_print_hex(error_code);
+    serial_print("\n");
+
+    while (1)
+    {
+        asm volatile ("cli; hlt");
+    }
+
+}
+
 void idt_load(void) {
     idt_set(0, divide_error_handler);
     idt_set(3, breakpoint_handler);
+    idt_set(13, gp_fault_handler);
+    idt_set(14, page_fault_handler);
 
     idtr.limit = sizeof(idt) - 1;
     idtr.base = (uint64_t)idt;
