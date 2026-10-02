@@ -23,7 +23,7 @@ static struct idt_entry idt[256];
 static struct idt_pointer idtr;
 
 // Put a handler into slot number `number`
-static void idt_set(int number, void *handler) {
+void idt_set(int number, void *handler) {
     uint64_t address = (uint64_t)handler;
 
     idt[number].address_low  = address & 0xFFFF;

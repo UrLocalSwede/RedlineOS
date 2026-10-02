@@ -5,8 +5,11 @@
 #include "arch/x86_64/gdt.h"
 #include "arch/x86_64/idt.h"
 
+#include "drivers/timer.h"
+#include "arch/x86_64/pic.h"
+
 __attribute__((used, section(".limine_requests")))
-static volatile uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(6);
+static volatile uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(4);
 
 __attribute__((used, section(".limine_requests_start")))
 static volatile uint64_t limine_requests_start_marker[] = LIMINE_REQUESTS_START_MARKER;
@@ -20,9 +23,9 @@ static volatile uint64_t limine_requests_end_marker[] = LIMINE_REQUESTS_END_MARK
 void kmain(void) {
     gdt_load();
     idt_load();
-
-    volatile uint64_t *p = (volatile uint64_t *)0x8000000000000000;
-    *p = 42;
+    pic_init();
+    timer_init();
+    asm volatile ("sti");
 
     serial_print("Welcome to RedlineOS\n");
 
